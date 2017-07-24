@@ -1,8 +1,11 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
-//const char filename[] = "/usr/share/dict/cracklib-small";
+#ifdef __APPLE__
 const char filename[] = "/usr/share/dict/words";
+#else
+const char filename[] = "/usr/share/dict/cracklib-small";
+#endif
 
 int main()
 {
@@ -11,6 +14,8 @@ int main()
 	//printf("Enter a word: ");
 	//std::cin >> word;
 	strcpy(word, "zebra");
+	int n = 0;
+	char data[70000][45];
 	for (int i = 0; i < 100; i++) {
 		std::ifstream fin;
 		fin.open(filename);
@@ -24,6 +29,7 @@ int main()
 		while (!fin.eof()) {
 			if (strlen(save) > 0) {
 				if (strcmp(save, line) >= 0) {
+					//data[i] = line;
 					printf("Not sorted at %s\n", line);
 				}
 			}
@@ -34,10 +40,39 @@ int main()
 				break;
 			}
 			fin >> line;
+			strcpy(data[n], line);
+			n++;
 		}
 		fin.close();
 
 	}
+	int start, end, mid;
+	//bubble sort
+	for (int i = 0; i < n-1; i++) {
+		for (int j = 0; j < n-1-i; j++) {
+			if (strcmp(data[j], data[j+1]) > 0) {
+				std::swap(data[j], data[j+1]);
+			}
+		}
+	}
+	//binary search
+	start = 0;
+	end = n-1;
+	while (start <= end) {
+		mid = start+(end/2);
+		int compare = strcmp(data[mid], word);
+		if (compare == 0) {
+			printf("DOUNE with binary search\n");
+		}
+		if (compare > 0) {
+			end = mid-1;
+		}
+		if (compare < 0) {
+			start = mid+1;
+		}
+	}
+	
+
 	if (isFound) {
 		printf("%s was found!\n", word);
 	} else {
